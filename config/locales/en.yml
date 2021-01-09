@@ -31,3 +31,14 @@
 
 en:
   hello: "Hello world"
+  activemodel:
+    errors:
+      models:
+        school:
+          attributes:
+            name:
+              taken: 'This name is already taken'
+            address:
+              taken: 'This address is already taken'
+            id:
+              not_found: 'The school does not exists'
