@@ -24,6 +24,17 @@ module V1
       end
     end
 
+    def destroy
+      @validator = action_validator.new(destroy_params)
+      if @validator.valid?
+        # DestroySchool can be found in /services folder
+        school = DestroySchool.new(destroy_params).call
+        render json: {}, status: :ok
+      else
+        render json: @validator.validation_errors, status: :bad_request
+      end
+    end
+
     private
 
     def create_params
@@ -32,6 +43,10 @@ module V1
 
     def update_params
       params.permit(:id, :name, :address)
+    end
+
+    def destroy_params
+      params.permit(:id)
     end
   end
 end

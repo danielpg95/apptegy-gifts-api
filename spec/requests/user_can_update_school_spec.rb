@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'User can create school', type: :request do
+describe 'User can update school', type: :request do
   let!(:name) do
     Faker::Name.name
   end

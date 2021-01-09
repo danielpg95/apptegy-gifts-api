@@ -7,10 +7,10 @@ module V1
       before_validation :find_school
 
       validates :id, :name, :address, presence: true
-      
+      validate :school_exists
+
       # We are not inside the School model, so we need to do a manual verification instead of
       # using uniqueness validation method
-      validate :school_exists
       validate :name_uniqueness, :address_uniqueness
 
       private
