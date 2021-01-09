@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'User can create school', type: :request do
+describe 'User can update recipient', type: :request do
   let!(:school) do
     create(:school)
   end

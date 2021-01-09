@@ -48,3 +48,12 @@ en:
               not_found: 'The school does not exists'
             id:
               not_found: 'The recipient does not exists'
+        order:
+          attributes:
+            school_id:
+              not_found: 'The school does not exists'
+            recipient_ids:
+              missing: 'Missing recipient or wrong id given'
+            gift_types:
+              invalid_type: 'Gift types are not valid'
+          order_limit_exceeded: 'The order can not be created because it exceeds the sent limit per day'
