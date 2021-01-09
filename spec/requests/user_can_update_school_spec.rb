@@ -9,9 +9,17 @@ describe 'User can create school', type: :request do
     Faker::Address.full_address 
   end
 
+  let!(:first_school) do
+    create(:school)
+  end
+
+  let!(:second_school) do
+    create(:school)
+  end
+
   context 'successfully' do
     before do
-      post '/v1/schools', params: { name: name, address: address }
+      patch "/v1/schools/#{first_school.id}", params: { name: name, address: address }
     end
     
     it 'returns school name and address' do
@@ -19,15 +27,15 @@ describe 'User can create school', type: :request do
       expect(JSON.parse(response.body)['data']["attributes"]['address']).to eq(address)
     end
 
-    it 'returns a created status' do
-      expect(response).to have_http_status(:created)
+    it 'returns a ok status' do
+      expect(response).to have_http_status(:ok)
     end
   end
 
   context 'unsuccessfully' do
     context 'missing school name' do
       before do
-        post '/v1/schools', params: { address: address }
+        patch "/v1/schools/#{first_school.id}", params: { address: address }
       end
 
       it 'returns missing name validation' do
@@ -37,21 +45,27 @@ describe 'User can create school', type: :request do
 
     context 'missing school address' do
       before do
-        post '/v1/schools', params: { name: name }
+        patch "/v1/schools/#{first_school.id}", params: { name: name }
       end
 
-      it 'returns missing name validation' do
+      it 'returns missing address validation' do
         expect(JSON.parse(response.body)['errors']['address']).to eq(["can't be blank"])
       end
     end
 
-    context 'using existing school name' do
-      let!(:school) do
-        create(:school)
+    context 'using wrong school id' do
+      before do
+        patch "/v1/schools/#{Faker::Number.number(digits: 2)}", params: { name: name, address: address }
       end
 
+      it 'returns not found validation' do
+        expect(JSON.parse(response.body)['errors']['id']).to eq(["The school does not exists"])
+      end
+    end
+
+    context 'using existing school name' do
       before do
-        post '/v1/schools', params: { name: school.name, address: address }
+        patch "/v1/schools/#{first_school.id}", params: { name: second_school.name, address: address }
       end
 
       it 'returns taken name validation' do
@@ -60,12 +74,8 @@ describe 'User can create school', type: :request do
     end
 
     context 'using existing school address' do
-      let!(:school) do
-        create(:school)
-      end
-
       before do
-        post '/v1/schools', params: { name: name, address: school.address }
+        patch "/v1/schools/#{first_school.id}", params: { name: name, address: second_school.address }
       end
 
       it 'returns taken address validation' do

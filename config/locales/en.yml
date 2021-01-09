@@ -40,3 +40,5 @@ en:
               taken: 'This name is already taken'
             address:
               taken: 'This address is already taken'
+            id:
+              not_found: 'The school does not exists'

@@ -1,26 +1,37 @@
 module V1
   class SchoolsController < ApplicationController
-    before_action :initialize_validator, only: %i[create update]
     def index; end
 
     def create
+      @validator = action_validator.new(create_params)
       if @validator.valid?
         # CreateSchool can be found in /services folder
-        school = CreateSchool.new(permitted_params).call
+        school = CreateSchool.new(create_params).call
         render json: school, status: :created, serializer: Serializer
       else
         render json: @validator.validation_errors, status: :bad_request
       end
     end
 
-    private
-    
-    def initialize_validator
-      @validator = action_validator.new(permitted_params)
+    def update
+      @validator = action_validator.new(update_params)
+      if @validator.valid?
+        # UpdateSchool can be found in /services folder
+        school = UpdateSchool.new(update_params).call
+        render json: school, status: :ok, serializer: Serializer
+      else
+        render json: @validator.validation_errors, status: :bad_request
+      end
     end
 
-    def permitted_params
+    private
+
+    def create_params
       params.permit(:name, :address)
+    end
+
+    def update_params
+      params.permit(:id, :name, :address)
     end
   end
 end
