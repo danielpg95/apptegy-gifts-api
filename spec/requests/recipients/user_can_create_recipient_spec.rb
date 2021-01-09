@@ -38,7 +38,7 @@ describe 'User can create school', type: :request do
   context 'unsuccessfully' do
     context 'with incorrect school id' do
       before do
-        post "/v1/recipient/#{Faker::Number.number(digits: 2)}",
+        post "/v1/recipient/#{Faker::Alphanumeric.alphanumeric(number: 10)}",
           params: { first_name: first_name, last_name: last_name, address: address }
       end
 
