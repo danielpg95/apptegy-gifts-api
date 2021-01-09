@@ -1,7 +1,5 @@
 module V1
   class SchoolsController < ApplicationController
-    def index; end
-
     def create
       @validator = action_validator.new(create_params)
       if @validator.valid?
