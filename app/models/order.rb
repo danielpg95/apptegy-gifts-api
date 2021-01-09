@@ -10,4 +10,8 @@ class Order < ApplicationRecord
 
   has_many :recipient_orders, dependent: :destroy
   has_many :recipients, through: :recipient_orders
+
+  def active_order?
+    %w[order_received order_processing].include? status
+  end
 end

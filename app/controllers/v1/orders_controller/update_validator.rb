@@ -6,7 +6,12 @@ module V1
 
       before_validation :find_school, :find_order, :find_recipients, :find_gifts
 
-      validate :school_exists, :order_exists, :recipients_exists, :gift_types_exists, :validate_order_size
+      validate :school_exists,
+               :order_exists,
+               :recipients_exists,
+               :gift_types_exists,
+               :valid_order_status,
+               :validate_order_size
 
       private
 
@@ -46,6 +51,11 @@ module V1
       def gift_types_exists
         errors.add(:gift_types, t('order.attributes.gift_types.invalid_type')) unless
           @gifts.present? && @gifts.count == gift_types.count
+      end
+
+      # active order method found in order model
+      def valid_order_status
+        errors.add(:order_status, t('order.order_status')) unless @order && @order.active_order?
       end
 
       def validate_order_size
