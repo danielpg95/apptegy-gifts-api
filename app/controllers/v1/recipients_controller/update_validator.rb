@@ -1,6 +1,6 @@
 module V1
   class RecipientsController
-    # Create controller action validator
+    # Update controller action validator
     class UpdateValidator < BaseValidator
       attr_accessor :first_name, :last_name, :address, :school_id, :id
 
@@ -25,7 +25,7 @@ module V1
       def find_recipient
         return unless @school
 
-        @recipient = @school.recipients.find_by(id: id)
+        @recipient = @school.recipients.find_by(id: id, enabled: true)
       end
 
       def recipient_exists

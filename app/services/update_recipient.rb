@@ -3,7 +3,8 @@
 class UpdateRecipient
   def initialize(params)
     @params = params
-    @recipient = Recipient.find_by(id: @params[:id])
+    school = School.find_by(id: @params[:school_id])
+    @recipient = school.recipients.find_by(id: @params[:id], enabled: true)
   end
 
   def call

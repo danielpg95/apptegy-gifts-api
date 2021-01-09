@@ -44,7 +44,7 @@ describe 'User can create school', type: :request do
   context 'unsuccessfully' do
     context 'with incorrect school id' do
       before do
-        patch "/v1/recipient/#{Faker::Number.number(digits: 2)}",
+        patch "/v1/recipient/#{Faker::Alphanumeric.alphanumeric(number: 10)}",
           params: { id: recipient.id, first_name: first_name, last_name: last_name, address: address }
       end
 
@@ -55,7 +55,21 @@ describe 'User can create school', type: :request do
 
     context 'with incorrect recipient id' do
       before do
-        patch "/v1/recipient/#{school.id}", params: { id: Faker::Number.number(digits: 2),
+        patch "/v1/recipient/#{school.id}", params: { id: Faker::Alphanumeric.alphanumeric(number: 10) ,
+                                                      first_name: first_name,
+                                                      last_name: last_name,
+                                                      address: address }
+      end
+
+      it 'returns missing recipient validation' do
+        expect(JSON.parse(response.body)['errors']['id']).to eq(["The recipient does not exists"])
+      end
+    end
+
+    context 'with disabled recipient' do
+      before do
+        recipient.update(enabled: false)
+        patch "/v1/recipient/#{school.id}", params: { id: recipient.id,
                                                       first_name: first_name,
                                                       last_name: last_name,
                                                       address: address }
