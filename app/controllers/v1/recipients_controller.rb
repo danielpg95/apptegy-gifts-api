@@ -1,5 +1,16 @@
 module V1
   class RecipientsController < ApplicationController
+    def index
+      @validator = action_validator.new(index_params)
+      if @validator.valid?
+        # This will return all recipients, even the disabled ones
+        school_recipients = School.find_by(id: index_params[:school_id]).recipients
+        render json: school_recipients, status: :ok, each_serializer: Serializer
+      else
+        render json: @validator.validation_errors, status: :bad_request
+      end
+    end
+
     def create
       @validator = action_validator.new(create_params)
       if @validator.valid?
@@ -24,7 +35,7 @@ module V1
       @validator = action_validator.new(destroy_params)
       if @validator.valid?
         # DestroySchool can be found in /services folder
-        school = DestroyRecipient.new(destroy_params).call
+        DestroyRecipient.new(destroy_params).call
         render json: {}, status: :ok
       else
         render json: @validator.validation_errors, status: :bad_request
@@ -32,6 +43,10 @@ module V1
     end
 
     private
+
+    def index_params
+      params.permit(:school_id)
+    end
 
     def create_params
       params.permit(:school_id, :first_name, :last_name, :address)

@@ -2,7 +2,7 @@ module V1
   class RecipientsController
     # Serializer to return selected class attributes
     class Serializer < ActiveModel::Serializer
-      attributes :first_name, :last_name, :address, :school
+      attributes :first_name, :last_name, :address, :enabled, :school
 
       def school
         SchoolSerializer.new(object.school).attributes
