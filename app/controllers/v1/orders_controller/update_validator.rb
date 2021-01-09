@@ -1,17 +1,23 @@
 module V1
   class OrdersController
-    # Create controller action validator
-    class CreateValidator < BaseValidator
-      attr_accessor :school_id, :recipient_ids, :gift_types
+    # Update controller action validator
+    class UpdateValidator < BaseValidator
+      attr_accessor :school_id, :order_id, :recipient_ids, :gift_types
 
-      before_validation :find_school, :find_recipients, :find_gifts
+      before_validation :find_school, :find_order, :find_recipients, :find_gifts
 
-      validate :school_exists, :recipients_exists, :gift_types_exists, :validate_order_size
+      validate :school_exists, :order_exists, :recipients_exists, :gift_types_exists, :validate_order_size
 
       private
 
       def find_school
         @school = School.find_by(id: school_id)
+      end
+
+      def find_order
+        return unless @school
+
+        @order = @school.orders.find_by(id: order_id)
       end
 
       def find_recipients
@@ -26,6 +32,10 @@ module V1
 
       def school_exists
         errors.add(:school_id, t('order.attributes.school_id.not_found')) unless @school
+      end
+
+      def order_exists
+        errors.add(:order_id, t('order.attributes.order_id.not_found')) unless @order
       end
 
       def recipients_exists

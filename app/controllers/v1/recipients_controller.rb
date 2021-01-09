@@ -34,7 +34,6 @@ module V1
     def destroy
       @validator = action_validator.new(destroy_params)
       if @validator.valid?
-        # DestroySchool can be found in /services folder
         DestroyRecipient.new(destroy_params).call
         render json: {}, status: :ok
       else

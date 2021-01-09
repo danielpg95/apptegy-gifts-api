@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'User can create order', type: :request do
+describe 'User can update order', type: :request do
   let!(:school) do
     create(:school)
   end
@@ -13,20 +13,28 @@ describe 'User can create order', type: :request do
     create(:recipient, school: school)
   end
 
+  let!(:order) do
+    order = create(:order, school: school)
+    order.recipients << first_recipient
+    order.gifts << Gift.find_by(gift_type: :hoodie)
+    order
+  end
+
   context 'successfully' do
     before do
-      post "/v1/order/#{school.id}",
-        params: { recipient_ids: [first_recipient.id, second_recipient.id], 
+      patch "/v1/order/#{school.id}",
+        params: { order_id: order.id,
+                  recipient_ids: [first_recipient.id, second_recipient.id], 
                   gift_types: [:mug, :t_shirt] }
     end
     
     it 'returns order' do
       json_attributes = JSON.parse(response.body)['data']["attributes"]
       expect(json_attributes['status']).to eq(Order.last.status)
-      expect(json_attributes['recipients'][0]).to eq(
-        { 'first-name' => first_recipient.first_name,
-          'last-name' => first_recipient.last_name,
-          'address' => first_recipient.address }
+      expect(json_attributes['recipients'][1]).to eq(
+        { 'first-name' => second_recipient.first_name,
+          'last-name' => second_recipient.last_name,
+          'address' => second_recipient.address }
       )
       expect(json_attributes['gifts'][0]).to eq(
         { 'gift-type' => 'mug'}
@@ -34,16 +42,17 @@ describe 'User can create order', type: :request do
       expect(json_attributes['school']['name']).to eq(school.name)
     end
 
-    it 'returns a created status' do
-      expect(response).to have_http_status(:created)
+    it 'returns a ok status' do
+      expect(response).to have_http_status(:ok)
     end
   end
 
   context 'unsuccessfully' do
     context 'with incorrect school id' do
       before do
-        post "/v1/order/#{Faker::Alphanumeric.alphanumeric(number: 10)}",
-          params: { recipient_ids: [first_recipient.id, second_recipient.id], 
+        patch "/v1/order/#{Faker::Alphanumeric.alphanumeric(number: 10)}",
+          params: { order_id: order.id,
+                    recipient_ids: [first_recipient.id, second_recipient.id], 
                     gift_types: [:mug, :t_shirt] }
       end
 
@@ -52,10 +61,22 @@ describe 'User can create order', type: :request do
       end
     end
 
+    context 'with incorrect order id' do
+      before do
+        patch "/v1/order/#{Faker::Alphanumeric.alphanumeric(number: 10)}",
+          params: { order_id: Faker::Alphanumeric.alphanumeric(number: 10),
+                    recipient_ids: [first_recipient.id, second_recipient.id], 
+                    gift_types: [:mug, :t_shirt] }
+      end
+
+      it 'returns missing order validation' do
+        expect(JSON.parse(response.body)['errors']['order_id']).to eq(["The order does not exists"])
+      end
+    end
+
     context 'missing recipient ids' do
       before do
-        post "/v1/order/#{school.id}",
-          params: { gift_types: [:mug, :t_shirt] }
+        patch "/v1/order/#{school.id}", params: { order_id: order.id, gift_types: [:mug, :t_shirt] }
       end
 
       it 'returns missing recipient ids validation' do
@@ -67,8 +88,9 @@ describe 'User can create order', type: :request do
       before do
         second_recipient.update(enabled: false)
 
-        post "/v1/order/#{school.id}",
-          params: { recipient_ids: [first_recipient.id, second_recipient.id], 
+        patch "/v1/order/#{school.id}",
+          params: { order_id: order.id,
+                    recipient_ids: [first_recipient.id, second_recipient.id], 
                     gift_types: [:mug, :t_shirt] }
       end
 
@@ -79,7 +101,8 @@ describe 'User can create order', type: :request do
 
     context 'missing gift types' do
       before do
-        post "/v1/order/#{school.id}", params: { recipient_ids: [first_recipient.id, second_recipient.id] }
+        patch "/v1/order/#{school.id}",
+          params: { order_id: order.id, recipient_ids: [first_recipient.id, second_recipient.id] }
       end
 
       it 'returns missing gifts invalid type validation' do
@@ -89,8 +112,10 @@ describe 'User can create order', type: :request do
 
     context 'wrong gift types' do
       before do
-        post "/v1/order/#{school.id}",
-          params: { recipient_ids: [first_recipient.id, second_recipient.id], gift_type: [:jacket] }
+        patch "/v1/order/#{school.id}",
+          params: { order_id: order.id,
+                    recipient_ids: [first_recipient.id, second_recipient.id], 
+                    gift_types: [:jacket] }
       end
 
       it 'returns missing gifts invalid type validation' do
@@ -104,8 +129,8 @@ describe 'User can create order', type: :request do
       (1...20).each do |_index|
         create(:recipient, school: school)
       end
-      post "/v1/order/#{school.id}",
-        params: { recipient_ids: school.recipients.ids,
+      patch "/v1/order/#{school.id}",
+        params: { order_id: order.id,recipient_ids: school.recipients.ids,
                   gift_types: [:mug, :t_shirt, :hoodie, :sticker] }
     end
 
