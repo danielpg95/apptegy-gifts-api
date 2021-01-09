@@ -42,3 +42,9 @@ en:
               taken: 'This address is already taken'
             id:
               not_found: 'The school does not exists'
+        recipient:
+          attributes:
+            school_id:
+              not_found: 'The school does not exists'
+            id:
+              not_found: 'The recipient does not exists'

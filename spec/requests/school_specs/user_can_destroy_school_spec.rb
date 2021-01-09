@@ -18,7 +18,7 @@ describe 'User can destroy school', type: :request do
   context 'unsuccessfully' do
     context 'using wrong school id' do
       before do
-        delete "/v1/schools/#{Faker::Number.number(digits: 2)}"
+        delete "/v1/schools/#{Faker::Alphanumeric.alphanumeric(number: 10)}"
       end
   
       it 'returns not found validation' do

@@ -1,12 +1,13 @@
 # As action complexity starts to grow, new actions or services are implemented inside the call method,
 # granting great flexibility for new features implementation
-class CreateSchool
+class DestroyRecipient
   def initialize(params)
     @params = params
+    school = School.find_by(id: @params[:school_id])
+    @recipient = school.recipients.find_by(id: @params[:id])
   end
 
   def call
-    # Validations were made in the controller action validator
-    School.create(@params)
+    @recipient.update(enabled: false)
   end
 end
