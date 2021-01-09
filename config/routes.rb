@@ -10,7 +10,7 @@ Rails.application.routes.draw do
     post 'recipient/:school_id', to: 'recipients#create'
     patch 'recipient/:school_id', to: 'recipients#update'
     delete 'recipient/:school_id', to: 'recipients#destroy'
-    # Personally i would've go with something similar to:
+    # Personally I would've go with something similar to:
     # resources :schools do
     #   resources :recipients, only: %i[index create update destroy]
     # end
