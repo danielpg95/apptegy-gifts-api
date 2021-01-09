@@ -109,7 +109,7 @@ describe 'User can create order', type: :request do
                   gift_types: [:mug, :t_shirt, :hoodie, :sticker] }
     end
 
-    it 'returns missing recipient ids validation' do
+    it 'returns order limit exceeded validation' do
       expect(JSON.parse(response.body)['errors']['order_limit_exceeded']).to eq(
         ["The order can not be created because it exceeds the sent limit per day"]
       )
