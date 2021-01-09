@@ -11,6 +11,7 @@ module V1
                :recipients_exists,
                :gift_types_exists,
                :valid_order_status,
+               :validate_recipients_count,
                :validate_order_size
 
       private
@@ -56,6 +57,16 @@ module V1
       # active order method found in order model
       def valid_order_status
         errors.add(:order_status, t('order.order_status')) unless @order && @order.active_order?
+      end
+
+      def validate_recipients_count
+        errors.add(:recipients_limit_exceeded, t('order.recipients_limit_exceeded')) if recipients_limit_exceeded?
+      end
+
+      def recipients_limit_exceeded?
+        return true if recipient_ids.nil?
+
+        recipient_ids.count > 20
       end
 
       def validate_order_size

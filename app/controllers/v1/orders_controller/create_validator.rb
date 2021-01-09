@@ -6,7 +6,11 @@ module V1
 
       before_validation :find_school, :find_recipients, :find_gifts
 
-      validate :school_exists, :recipients_exists, :gift_types_exists, :validate_order_size
+      validate :school_exists,
+               :recipients_exists,
+               :gift_types_exists,
+               :validate_recipients_count,
+               :validate_order_size
 
       private
 
@@ -36,6 +40,16 @@ module V1
       def gift_types_exists
         errors.add(:gift_types, t('order.attributes.gift_types.invalid_type')) unless
           @gifts.present? && @gifts.count == gift_types.count
+      end
+
+      def validate_recipients_count
+        errors.add(:recipients_limit_exceeded, t('order.recipients_limit_exceeded')) if recipients_limit_exceeded?
+      end
+
+      def recipients_limit_exceeded?
+        return true if recipient_ids.nil?
+
+        recipient_ids.count > 20
       end
 
       def validate_order_size

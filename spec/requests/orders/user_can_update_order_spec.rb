@@ -141,6 +141,23 @@ describe 'User can update order', type: :request do
     end
   end
 
+  context 'exceeding recipients limit' do
+    before do
+      (1...25).each do |_index|
+        create(:recipient, school: school)
+      end
+      patch "/v1/order/#{school.id}",
+        params: { order_id: order.id,recipient_ids: school.recipients.ids,
+                  gift_types: [:mug, :t_shirt, :hoodie, :sticker] }
+    end
+
+    it 'returns order limit exceeded validation' do
+      expect(JSON.parse(response.body)['errors']['recipients_limit_exceeded']).to eq(
+        ["The order can not be created because it exceeds the recipients limit per order"]
+      )
+    end
+  end
+
   context 'exceeding order limit' do
     before do
       (1...20).each do |_index|
