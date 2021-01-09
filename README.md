@@ -4,7 +4,7 @@ This is a skeleton of a rails app to serve as a starting point for the code chal
 
 Rails and Ruby versions: Defined on the Gemfile
 
-##Configuration
+## Configuration
 
 The app has the following tools preinstalled and configured:
   - Rspec
@@ -13,7 +13,7 @@ The app has the following tools preinstalled and configured:
   - Database Cleaner
   - Shoulda Matchers
 
-#Getting Started
+# Getting Started
 
 After cloning the repo:
 ### Install the gems
