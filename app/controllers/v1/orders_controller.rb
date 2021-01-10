@@ -41,6 +41,16 @@ module V1
       end
     end
 
+    def ship_order
+      @validator = action_validator.new(ship_order_params)
+      if @validator.valid?
+        order = ShipOrder.new(ship_order_params).call
+        render json: order, status: :ok, serializer: Serializer
+      else
+        render json: @validator.validation_errors, status: :bad_request
+      end
+    end
+
     private
 
     def index_params
@@ -57,6 +67,10 @@ module V1
 
     def destroy_params
       params.permit(:school_id, :order_id)
+    end
+
+    def ship_order_params
+      params.permit(:school_id, :order_id, :send_emails)
     end
   end
 end

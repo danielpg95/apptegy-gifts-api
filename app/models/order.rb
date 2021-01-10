@@ -1,5 +1,6 @@
 # Order model
 # status: integer (enum)
+# shipped_at: datetime
 class Order < ApplicationRecord
   enum status: %i[order_received order_processing order_shipped order_cancelled]
 
@@ -13,5 +14,10 @@ class Order < ApplicationRecord
 
   def active_order?
     %w[order_received order_processing].include? status
+  end
+
+  # To each recipient, the amount of gifts are sent
+  def gifts_amount
+    recipients.count * gifts.count
   end
 end

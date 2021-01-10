@@ -20,5 +20,6 @@ Rails.application.routes.draw do
     patch 'order/:school_id', to: 'orders#update'
     delete 'order/:school_id', to: 'orders#destroy'
 
+    post 'ship_order/:school_id', to: 'orders#ship_order'
   end
 end

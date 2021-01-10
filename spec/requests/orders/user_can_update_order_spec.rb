@@ -58,7 +58,7 @@ describe 'User can update order', type: :request do
                     gift_types: [:mug, :t_shirt] }
       end
 
-      it 'returns missing recipient ids validation' do
+      it 'returns order status validation' do
         expect(JSON.parse(response.body)['errors']['order_status']).to eq(
           ["Your order has already been shipped or is cancelled"]
         )

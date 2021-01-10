@@ -61,3 +61,4 @@ en:
           order_limit_exceeded: 'The order can not be created because it exceeds the sent limit per day'
           recipients_limit_exceeded: 'The order can not be created because it exceeds the recipients limit per order'
           order_status: 'Your order has already been shipped or is cancelled'
+          shipment_limit_exceeds: 'The order can not be shipped because the school reached or will reach the quota for today'
