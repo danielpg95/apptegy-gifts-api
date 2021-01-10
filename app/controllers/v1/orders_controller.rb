@@ -21,6 +21,16 @@ module V1
       end
     end
 
+    def destroy
+      @validator = action_validator.new(destroy_params)
+      if @validator.valid?
+        CancelOrder.new(destroy_params).call
+        render json: {}, status: :ok
+      else
+        render json: @validator.validation_errors, status: :bad_request
+      end
+    end
+
     private
 
     def create_params
@@ -29,6 +39,10 @@ module V1
 
     def update_params
       params.permit(:school_id, :order_id, recipient_ids: [], gift_types: [])
+    end
+
+    def destroy_params
+      params.permit(:school_id, :order_id)
     end
   end
 end

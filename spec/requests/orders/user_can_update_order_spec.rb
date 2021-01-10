@@ -60,7 +60,7 @@ describe 'User can update order', type: :request do
 
       it 'returns missing recipient ids validation' do
         expect(JSON.parse(response.body)['errors']['order_status']).to eq(
-          ["Your order has already been shipped or was cancelled"]
+          ["Your order has already been shipped or is cancelled"]
         )
       end
     end
@@ -80,7 +80,7 @@ describe 'User can update order', type: :request do
 
     context 'with incorrect order id' do
       before do
-        patch "/v1/order/#{Faker::Alphanumeric.alphanumeric(number: 10)}",
+        patch "/v1/order/#{school.id}",
           params: { order_id: Faker::Alphanumeric.alphanumeric(number: 10),
                     recipient_ids: [first_recipient.id, second_recipient.id], 
                     gift_types: [:mug, :t_shirt] }
