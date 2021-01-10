@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 describe 'User can create school', type: :request do
+  let!(:auth_token) do
+    AuthenticateUser.new({username: 'apptegy', password: 'apptegy'}).call
+  end
+
   let!(:name) do
     Faker::Name.name
   end
@@ -11,7 +15,7 @@ describe 'User can create school', type: :request do
 
   context 'successfully' do
     before do
-      post '/v1/schools', params: { name: name, address: address }
+      post '/v1/schools', params: { name: name, address: address }, headers: {authorization: auth_token}
     end
     
     it 'returns school name and address' do
@@ -27,7 +31,7 @@ describe 'User can create school', type: :request do
   context 'unsuccessfully' do
     context 'missing school name' do
       before do
-        post '/v1/schools', params: { address: address }
+        post '/v1/schools', params: { address: address }, headers: {authorization: auth_token}
       end
 
       it 'returns missing name validation' do
@@ -37,7 +41,7 @@ describe 'User can create school', type: :request do
 
     context 'missing school address' do
       before do
-        post '/v1/schools', params: { name: name }
+        post '/v1/schools', params: { name: name }, headers: {authorization: auth_token}
       end
 
       it 'returns missing name validation' do
@@ -51,7 +55,7 @@ describe 'User can create school', type: :request do
       end
 
       before do
-        post '/v1/schools', params: { name: school.name, address: address }
+        post '/v1/schools', params: { name: school.name, address: address }, headers: {authorization: auth_token}
       end
 
       it 'returns taken name validation' do
@@ -65,7 +69,7 @@ describe 'User can create school', type: :request do
       end
 
       before do
-        post '/v1/schools', params: { name: name, address: school.address }
+        post '/v1/schools', params: { name: name, address: school.address }, headers: {authorization: auth_token}
       end
 
       it 'returns taken address validation' do

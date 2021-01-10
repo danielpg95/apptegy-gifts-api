@@ -9,6 +9,8 @@ class ApplicationController < ActionController::API
 
   def authenticate_request
     auth_request = AuthorizeApiRequest.new(request.headers)
-    render json: auth_request.errors, status: :unauthorized unless auth_request.call
+    # This variable will identify which user is creating the request if authorized
+    @current_user = auth_request.call
+    render json: auth_request.errors, status: :unauthorized unless @current_user
   end
 end

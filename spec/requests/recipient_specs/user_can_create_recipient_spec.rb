@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 describe 'User can create recipient', type: :request do
+  let!(:auth_token) do
+    AuthenticateUser.new({username: 'apptegy', password: 'apptegy'}).call
+  end
+
   let!(:school) do
     create(:school)
   end
@@ -19,7 +23,8 @@ describe 'User can create recipient', type: :request do
 
   context 'successfully' do
     before do
-      post "/v1/recipient/#{school.id}", params: { first_name: first_name, last_name: last_name, address: address }
+      post "/v1/recipient/#{school.id}",
+        params: { first_name: first_name, last_name: last_name, address: address }, headers: {authorization: auth_token}
     end
     
     it 'returns recipient and the school it belongs' do
@@ -39,7 +44,8 @@ describe 'User can create recipient', type: :request do
     context 'with incorrect school id' do
       before do
         post "/v1/recipient/#{School.last.id + 1}",
-          params: { first_name: first_name, last_name: last_name, address: address }
+          params: { first_name: first_name, last_name: last_name, address: address },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing school validation' do
@@ -49,7 +55,9 @@ describe 'User can create recipient', type: :request do
 
     context 'missing recipient first name' do
       before do
-        post "/v1/recipient/#{school.id}", params: { last_name: last_name, address: address }
+        post "/v1/recipient/#{school.id}",
+          params: { last_name: last_name, address: address },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing first name validation' do
@@ -59,7 +67,9 @@ describe 'User can create recipient', type: :request do
 
     context 'missing recipient last name' do
       before do
-        post "/v1/recipient/#{school.id}", params: { first_name: first_name, address: address }
+        post "/v1/recipient/#{school.id}",
+          params: { first_name: first_name, address: address },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing last name validation' do
@@ -69,7 +79,9 @@ describe 'User can create recipient', type: :request do
 
     context 'missing recipient address' do
       before do
-        post "/v1/recipient/#{school.id}", params: { first_name: first_name, last_name: last_name }
+        post "/v1/recipient/#{school.id}",
+          params: { first_name: first_name, last_name: last_name },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing address validation' do

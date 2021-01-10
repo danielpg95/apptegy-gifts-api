@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 describe 'User can update order', type: :request do
+  let!(:auth_token) do
+    AuthenticateUser.new({username: 'apptegy', password: 'apptegy'}).call
+  end
+
   let!(:school) do
     create(:school)
   end
@@ -25,7 +29,8 @@ describe 'User can update order', type: :request do
       patch "/v1/order/#{school.id}",
         params: { order_id: order.id,
                   recipient_ids: [first_recipient.id, second_recipient.id], 
-                  gift_types: [:mug, :t_shirt] }
+                  gift_types: [:mug, :t_shirt] },
+        headers: {authorization: auth_token}
     end
     
     it 'returns order' do
@@ -55,7 +60,8 @@ describe 'User can update order', type: :request do
         patch "/v1/order/#{school.id}",
           params: { order_id: order.id,
                     recipient_ids: [first_recipient.id, second_recipient.id], 
-                    gift_types: [:mug, :t_shirt] }
+                    gift_types: [:mug, :t_shirt] },
+          headers: {authorization: auth_token}
       end
 
       it 'returns order status validation' do
@@ -70,7 +76,8 @@ describe 'User can update order', type: :request do
         patch "/v1/order/#{School.last.id + 1}",
           params: { order_id: order.id,
                     recipient_ids: [first_recipient.id, second_recipient.id], 
-                    gift_types: [:mug, :t_shirt] }
+                    gift_types: [:mug, :t_shirt] },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing school validation' do
@@ -83,7 +90,8 @@ describe 'User can update order', type: :request do
         patch "/v1/order/#{school.id}",
           params: { order_id: Faker::Alphanumeric.alphanumeric(number: 10),
                     recipient_ids: [first_recipient.id, second_recipient.id], 
-                    gift_types: [:mug, :t_shirt] }
+                    gift_types: [:mug, :t_shirt] },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing order validation' do
@@ -93,7 +101,9 @@ describe 'User can update order', type: :request do
 
     context 'missing recipient ids' do
       before do
-        patch "/v1/order/#{school.id}", params: { order_id: order.id, gift_types: [:mug, :t_shirt] }
+        patch "/v1/order/#{school.id}",
+          params: { order_id: order.id, gift_types: [:mug, :t_shirt] },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing recipient ids validation' do
@@ -108,7 +118,8 @@ describe 'User can update order', type: :request do
         patch "/v1/order/#{school.id}",
           params: { order_id: order.id,
                     recipient_ids: [first_recipient.id, second_recipient.id], 
-                    gift_types: [:mug, :t_shirt] }
+                    gift_types: [:mug, :t_shirt] },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing recipient ids validation' do
@@ -119,7 +130,8 @@ describe 'User can update order', type: :request do
     context 'missing gift types' do
       before do
         patch "/v1/order/#{school.id}",
-          params: { order_id: order.id, recipient_ids: [first_recipient.id, second_recipient.id] }
+          params: { order_id: order.id, recipient_ids: [first_recipient.id, second_recipient.id] },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing gifts invalid type validation' do
@@ -132,7 +144,8 @@ describe 'User can update order', type: :request do
         patch "/v1/order/#{school.id}",
           params: { order_id: order.id,
                     recipient_ids: [first_recipient.id, second_recipient.id], 
-                    gift_types: [:jacket] }
+                    gift_types: [:jacket] },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing gifts invalid type validation' do
@@ -148,7 +161,8 @@ describe 'User can update order', type: :request do
       end
       patch "/v1/order/#{school.id}",
         params: { order_id: order.id,recipient_ids: school.recipients.ids,
-                  gift_types: [:mug, :t_shirt, :hoodie, :sticker] }
+                  gift_types: [:mug, :t_shirt, :hoodie, :sticker] },
+        headers: {authorization: auth_token}
     end
 
     it 'returns order limit exceeded validation' do
@@ -165,7 +179,8 @@ describe 'User can update order', type: :request do
       end
       patch "/v1/order/#{school.id}",
         params: { order_id: order.id,recipient_ids: school.recipients.ids,
-                  gift_types: [:mug, :t_shirt, :hoodie, :sticker] }
+                  gift_types: [:mug, :t_shirt, :hoodie, :sticker] },
+        headers: {authorization: auth_token}
     end
 
     it 'returns order limit exceeded validation' do

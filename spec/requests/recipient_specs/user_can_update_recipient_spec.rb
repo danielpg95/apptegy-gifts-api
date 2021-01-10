@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 describe 'User can update recipient', type: :request do
+  let!(:auth_token) do
+    AuthenticateUser.new({username: 'apptegy', password: 'apptegy'}).call
+  end
+
   let!(:school) do
     create(:school)
   end
@@ -24,7 +28,8 @@ describe 'User can update recipient', type: :request do
   context 'successfully' do
     before do
       patch "/v1/recipient/#{school.id}",
-        params: { id: recipient.id, first_name: first_name, last_name: last_name, address: address }
+        params: { id: recipient.id, first_name: first_name, last_name: last_name, address: address },
+        headers: {authorization: auth_token}
     end
     
     it 'returns recipient and the school it belongs' do
@@ -45,7 +50,8 @@ describe 'User can update recipient', type: :request do
     context 'with incorrect school id' do
       before do
         patch "/v1/recipient/#{School.last.id + 1}",
-          params: { id: recipient.id, first_name: first_name, last_name: last_name, address: address }
+          params: { id: recipient.id, first_name: first_name, last_name: last_name, address: address },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing school validation' do
@@ -55,10 +61,12 @@ describe 'User can update recipient', type: :request do
 
     context 'with incorrect recipient id' do
       before do
-        patch "/v1/recipient/#{school.id}", params: { id: Faker::Alphanumeric.alphanumeric(number: 10) ,
-                                                      first_name: first_name,
-                                                      last_name: last_name,
-                                                      address: address }
+        patch "/v1/recipient/#{school.id}",
+          params: { id: Faker::Alphanumeric.alphanumeric(number: 10),
+                    first_name: first_name,
+                    last_name: last_name,
+                    address: address },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing recipient validation' do
@@ -69,10 +77,12 @@ describe 'User can update recipient', type: :request do
     context 'with disabled recipient' do
       before do
         recipient.update(enabled: false)
-        patch "/v1/recipient/#{school.id}", params: { id: recipient.id,
-                                                      first_name: first_name,
-                                                      last_name: last_name,
-                                                      address: address }
+        patch "/v1/recipient/#{school.id}",
+          params: { id: recipient.id,
+                    first_name: first_name,
+                    last_name: last_name,
+                    address: address },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing recipient validation' do
@@ -82,7 +92,9 @@ describe 'User can update recipient', type: :request do
 
     context 'missing recipient first name' do
       before do
-        patch "/v1/recipient/#{school.id}", params: { id: recipient.id, last_name: last_name, address: address }
+        patch "/v1/recipient/#{school.id}",
+          params: { id: recipient.id, last_name: last_name, address: address },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing first name validation' do
@@ -92,7 +104,9 @@ describe 'User can update recipient', type: :request do
 
     context 'missing recipient last name' do
       before do
-        patch "/v1/recipient/#{school.id}", params: { id: recipient.id, first_name: first_name, address: address }
+        patch "/v1/recipient/#{school.id}", 
+          params: { id: recipient.id, first_name: first_name, address: address },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing last name validation' do
@@ -102,7 +116,9 @@ describe 'User can update recipient', type: :request do
 
     context 'missing recipient address' do
       before do
-        patch "/v1/recipient/#{school.id}", params: { id: recipient.id, first_name: first_name, last_name: last_name }
+        patch "/v1/recipient/#{school.id}",
+          params: { id: recipient.id, first_name: first_name, last_name: last_name },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing address validation' do

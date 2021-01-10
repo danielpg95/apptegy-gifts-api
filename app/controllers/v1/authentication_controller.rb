@@ -9,7 +9,7 @@ module V1
       if auth_token.present?
         render json: { auth_token: auth_token }
       else
-        render json: { error: auth_request.errors }, status: :unauthorized
+        render json: { errors: auth_request.errors }, status: :unauthorized
       end
     end
 

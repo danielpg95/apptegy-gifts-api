@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 describe 'User can update school', type: :request do
+  let!(:auth_token) do
+    AuthenticateUser.new({username: 'apptegy', password: 'apptegy'}).call
+  end
+
   let!(:name) do
     Faker::Name.name
   end
@@ -19,7 +23,9 @@ describe 'User can update school', type: :request do
 
   context 'successfully' do
     before do
-      patch "/v1/schools/#{first_school.id}", params: { name: name, address: address }
+      patch "/v1/schools/#{first_school.id}",
+        params: { name: name, address: address },
+        headers: {authorization: auth_token}
     end
     
     it 'returns school name and address' do
@@ -35,7 +41,7 @@ describe 'User can update school', type: :request do
   context 'unsuccessfully' do
     context 'missing school name' do
       before do
-        patch "/v1/schools/#{first_school.id}", params: { address: address }
+        patch "/v1/schools/#{first_school.id}", params: { address: address }, headers: {authorization: auth_token}
       end
 
       it 'returns missing name validation' do
@@ -45,7 +51,7 @@ describe 'User can update school', type: :request do
 
     context 'missing school address' do
       before do
-        patch "/v1/schools/#{first_school.id}", params: { name: name }
+        patch "/v1/schools/#{first_school.id}", params: { name: name }, headers: {authorization: auth_token}
       end
 
       it 'returns missing address validation' do
@@ -55,7 +61,9 @@ describe 'User can update school', type: :request do
 
     context 'using wrong school id' do
       before do
-        patch "/v1/schools/#{School.last.id + 1}", params: { name: name, address: address }
+        patch "/v1/schools/#{School.last.id + 1}",
+          params: { name: name, address: address },
+          headers: {authorization: auth_token}
       end
 
       it 'returns not found validation' do
@@ -65,7 +73,9 @@ describe 'User can update school', type: :request do
 
     context 'using existing school name' do
       before do
-        patch "/v1/schools/#{first_school.id}", params: { name: second_school.name, address: address }
+        patch "/v1/schools/#{first_school.id}",
+          params: { name: second_school.name, address: address },
+          headers: {authorization: auth_token}
       end
 
       it 'returns taken name validation' do
@@ -75,7 +85,9 @@ describe 'User can update school', type: :request do
 
     context 'using existing school address' do
       before do
-        patch "/v1/schools/#{first_school.id}", params: { name: name, address: second_school.address }
+        patch "/v1/schools/#{first_school.id}",
+          params: { name: name, address: second_school.address },
+          headers: {authorization: auth_token}
       end
 
       it 'returns taken address validation' do
