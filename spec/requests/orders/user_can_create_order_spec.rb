@@ -42,7 +42,7 @@ describe 'User can create order', type: :request do
   context 'unsuccessfully' do
     context 'with incorrect school id' do
       before do
-        post "/v1/order/#{Faker::Alphanumeric.alphanumeric(number: 10)}",
+        post "/v1/order/#{School.last.id + 1}",
           params: { recipient_ids: [first_recipient.id, second_recipient.id], 
                     gift_types: [:mug, :t_shirt] }
       end

@@ -61,7 +61,7 @@ describe 'User can ship order', type: :request do
 
     context 'with incorrect school id' do
       before do
-        post "/v1/ship_order/#{Faker::Alphanumeric.alphanumeric(number: 10)}", params: { order_id: order.id }
+        post "/v1/ship_order/#{School.last.id + 1}", params: { order_id: order.id }
       end
 
       it 'returns missing school validation' do

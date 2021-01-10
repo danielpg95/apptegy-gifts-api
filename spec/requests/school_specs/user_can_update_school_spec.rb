@@ -55,7 +55,7 @@ describe 'User can update school', type: :request do
 
     context 'using wrong school id' do
       before do
-        patch "/v1/schools/#{Faker::Alphanumeric.alphanumeric(number: 10)}", params: { name: name, address: address }
+        patch "/v1/schools/#{School.last.id + 1}", params: { name: name, address: address }
       end
 
       it 'returns not found validation' do

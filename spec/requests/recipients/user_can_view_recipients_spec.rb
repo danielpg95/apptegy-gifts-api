@@ -31,7 +31,7 @@ describe 'User can view recipients', type: :request do
   context 'unsuccessfully' do
     context 'using wrong school id' do
       before do
-        delete "/v1/recipient/#{Faker::Alphanumeric.alphanumeric(number: 10)}"
+        delete "/v1/recipient/#{School.last.id + 1}"
       end
   
       it 'returns not found validation' do

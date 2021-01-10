@@ -67,7 +67,7 @@ describe 'User can update order', type: :request do
 
     context 'with incorrect school id' do
       before do
-        patch "/v1/order/#{Faker::Alphanumeric.alphanumeric(number: 10)}",
+        patch "/v1/order/#{School.last.id + 1}",
           params: { order_id: order.id,
                     recipient_ids: [first_recipient.id, second_recipient.id], 
                     gift_types: [:mug, :t_shirt] }
