@@ -1,5 +1,15 @@
 module V1
   class OrdersController < ApplicationController
+    def index
+      @validator = action_validator.new(index_params)
+      if @validator.valid?
+        school_orders = School.find_by(id: index_params[:school_id]).orders
+        render json: school_orders, status: :ok, each_serializer: Serializer
+      else
+        render json: @validator.validation_errors, status: :bad_request
+      end
+    end
+
     def create
       @validator = action_validator.new(create_params)
       if @validator.valid?
@@ -32,6 +42,10 @@ module V1
     end
 
     private
+
+    def index_params
+      params.permit(:school_id)
+    end
 
     def create_params
       params.permit(:school_id, recipient_ids: [], gift_types: [])
