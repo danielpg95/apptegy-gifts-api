@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 describe 'User can ship order', type: :request do
+  let!(:auth_token) do
+    AuthenticateUser.new({username: 'apptegy', password: 'apptegy'}).call
+  end
+
   let!(:school) do
     create(:school)
   end
@@ -22,7 +26,9 @@ describe 'User can ship order', type: :request do
 
   context 'successfully' do
     before do
-      post "/v1/ship_order/#{school.id}", params: { order_id: order.id, send_emails: true }
+      post "/v1/ship_order/#{school.id}",
+        params: { order_id: order.id, send_emails: true },
+        headers: {authorization: auth_token}
     end
     
     it 'returns order' do
@@ -49,7 +55,7 @@ describe 'User can ship order', type: :request do
       before do
         order.update(status: :order_shipped)
 
-        post "/v1/ship_order/#{school.id}", params: { order_id: order.id }
+        post "/v1/ship_order/#{school.id}", params: { order_id: order.id }, headers: {authorization: auth_token}
       end
 
       it 'returns order status validation' do
@@ -61,7 +67,9 @@ describe 'User can ship order', type: :request do
 
     context 'with incorrect school id' do
       before do
-        post "/v1/ship_order/#{School.last.id + 1}", params: { order_id: order.id }
+        post "/v1/ship_order/#{School.last.id + 1}",
+          params: { order_id: order.id },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing school validation' do
@@ -71,7 +79,9 @@ describe 'User can ship order', type: :request do
 
     context 'with incorrect order id' do
       before do
-        post "/v1/ship_order/#{school.id}", params: { order_id: Faker::Alphanumeric.alphanumeric(number: 10)}
+        post "/v1/ship_order/#{school.id}",
+          params: { order_id: Faker::Alphanumeric.alphanumeric(number: 10)},
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing order validation' do
@@ -87,7 +97,7 @@ describe 'User can ship order', type: :request do
           order.gifts << Gift.where(gift_type: %i[mug t_shirt hoodie sticker])
           order
         end
-        post "/v1/ship_order/#{school.id}", params: { order_id: order.id }
+        post "/v1/ship_order/#{school.id}", params: { order_id: order.id }, headers: {authorization: auth_token}
       end
 
       it 'returns order limit exceeded validation' do

@@ -1,13 +1,17 @@
 require 'rails_helper'
 
 describe 'User can destroy school', type: :request do
+  let!(:auth_token) do
+    AuthenticateUser.new({username: 'apptegy', password: 'apptegy'}).call
+  end
+
   let!(:school) do
     create(:school)
   end
 
   context 'successfully' do
     before do
-      delete "/v1/schools/#{school.id}"
+      delete "/v1/schools/#{school.id}", headers: {authorization: auth_token}
     end
 
     it 'returns a ok status' do
@@ -18,7 +22,7 @@ describe 'User can destroy school', type: :request do
   context 'unsuccessfully' do
     context 'using wrong school id' do
       before do
-        delete "/v1/schools/#{School.last.id + 1}"
+        delete "/v1/schools/#{School.last.id + 1}", headers: {authorization: auth_token}
       end
   
       it 'returns not found validation' do

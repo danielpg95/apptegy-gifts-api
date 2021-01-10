@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 describe 'User can cancel order', type: :request do
+  let!(:auth_token) do
+    AuthenticateUser.new({username: 'apptegy', password: 'apptegy'}).call
+  end
+
   let!(:school) do
     create(:school)
   end
@@ -18,7 +22,7 @@ describe 'User can cancel order', type: :request do
 
   context 'successfully' do
     before do
-      delete "/v1/order/#{school.id}", params: { order_id: order.id }
+      delete "/v1/order/#{school.id}", params: { order_id: order.id }, headers: {authorization: auth_token}
     end
 
     it 'returns a ok status' do
@@ -31,7 +35,7 @@ describe 'User can cancel order', type: :request do
       before do
         order.update(status: :order_shipped)
 
-        delete "/v1/order/#{school.id}", params: { order_id: order.id  }
+        delete "/v1/order/#{school.id}", params: { order_id: order.id }, headers: {authorization: auth_token}
       end
 
       it 'returns missing recipient ids validation' do
@@ -44,7 +48,8 @@ describe 'User can cancel order', type: :request do
     context 'with incorrect school id' do
       before do
         delete "/v1/order/#{School.last.id + 1}",
-          params: { order_id: order.id }
+          params: { order_id: order.id },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing school validation' do
@@ -55,7 +60,8 @@ describe 'User can cancel order', type: :request do
     context 'with incorrect order id' do
       before do
         delete "/v1/order/#{school.id}",
-          params: { order_id: Faker::Alphanumeric.alphanumeric(number: 10) }
+          params: { order_id: Faker::Alphanumeric.alphanumeric(number: 10) },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing order validation' do

@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 describe 'User can view orders', type: :request do
+  let!(:auth_token) do
+    AuthenticateUser.new({username: 'apptegy', password: 'apptegy'}).call
+  end
+
   let!(:school) do
     create(:school)
   end
@@ -18,7 +22,7 @@ describe 'User can view orders', type: :request do
 
   context 'successfully' do
     before do
-      get "/v1/order/#{school.id}"
+      get "/v1/order/#{school.id}", headers: {authorization: auth_token}
     end
 
     it 'returns a list of school orders' do
@@ -46,7 +50,7 @@ describe 'User can view orders', type: :request do
   context 'unsuccessfully' do
     context 'using wrong school id' do
       before do
-        get "/v1/order/#{School.last.id + 1}"
+        get "/v1/order/#{School.last.id + 1}", headers: {authorization: auth_token}
       end
   
       it 'returns not found validation' do

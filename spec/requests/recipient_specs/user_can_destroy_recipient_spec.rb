@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 describe 'User can destroy recipient', type: :request do
+  let!(:auth_token) do
+    AuthenticateUser.new({username: 'apptegy', password: 'apptegy'}).call
+  end
+
   let!(:school) do
     create(:school)
   end
@@ -11,7 +15,7 @@ describe 'User can destroy recipient', type: :request do
     end
 
     before do
-      delete "/v1/recipient/#{school.id}", params: {id: recipient.id}
+      delete "/v1/recipient/#{school.id}", params: {id: recipient.id}, headers: {authorization: auth_token}
     end
 
     it 'returns a ok status' do
@@ -22,7 +26,7 @@ describe 'User can destroy recipient', type: :request do
   context 'unsuccessfully' do
     context 'using wrong school id' do
       before do
-        delete "/v1/recipient/#{School.last.id + 1}"
+        delete "/v1/recipient/#{School.last.id + 1}", headers: {authorization: auth_token}
       end
   
       it 'returns not found validation' do
@@ -36,7 +40,9 @@ describe 'User can destroy recipient', type: :request do
       end
 
       before do
-        delete "/v1/recipient/#{school.id}", params: {id: Faker::Alphanumeric.alphanumeric(number: 10)}
+        delete "/v1/recipient/#{school.id}",
+          params: {id: Faker::Alphanumeric.alphanumeric(number: 10)},
+          headers: {authorization: auth_token}
       end
   
       it 'returns not found validation' do
@@ -50,7 +56,7 @@ describe 'User can destroy recipient', type: :request do
       end
 
       before do
-        delete "/v1/recipient/#{school.id}", params: {id: recipient.id}
+        delete "/v1/recipient/#{school.id}", params: {id: recipient.id}, headers: {authorization: auth_token}
       end
   
       it 'returns not found validation' do

@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 describe 'User can create order', type: :request do
+  let!(:auth_token) do
+    AuthenticateUser.new({username: 'apptegy', password: 'apptegy'}).call
+  end
+
   let!(:school) do
     create(:school)
   end
@@ -16,8 +20,8 @@ describe 'User can create order', type: :request do
   context 'successfully' do
     before do
       post "/v1/order/#{school.id}",
-        params: { recipient_ids: [first_recipient.id, second_recipient.id], 
-                  gift_types: [:mug, :t_shirt] }
+        params: { recipient_ids: [first_recipient.id, second_recipient.id], gift_types: [:mug, :t_shirt] },
+        headers: {authorization: auth_token}
     end
     
     it 'returns order' do
@@ -43,8 +47,8 @@ describe 'User can create order', type: :request do
     context 'with incorrect school id' do
       before do
         post "/v1/order/#{School.last.id + 1}",
-          params: { recipient_ids: [first_recipient.id, second_recipient.id], 
-                    gift_types: [:mug, :t_shirt] }
+          params: { recipient_ids: [first_recipient.id, second_recipient.id], gift_types: [:mug, :t_shirt] },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing school validation' do
@@ -55,7 +59,8 @@ describe 'User can create order', type: :request do
     context 'missing recipient ids' do
       before do
         post "/v1/order/#{school.id}",
-          params: { gift_types: [:mug, :t_shirt] }
+          params: { gift_types: [:mug, :t_shirt] },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing recipient ids validation' do
@@ -68,8 +73,8 @@ describe 'User can create order', type: :request do
         second_recipient.update(enabled: false)
 
         post "/v1/order/#{school.id}",
-          params: { recipient_ids: [first_recipient.id, second_recipient.id], 
-                    gift_types: [:mug, :t_shirt] }
+          params: { recipient_ids: [first_recipient.id, second_recipient.id], gift_types: [:mug, :t_shirt] },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing recipient ids validation' do
@@ -79,7 +84,9 @@ describe 'User can create order', type: :request do
 
     context 'missing gift types' do
       before do
-        post "/v1/order/#{school.id}", params: { recipient_ids: [first_recipient.id, second_recipient.id] }
+        post "/v1/order/#{school.id}",
+          params: { recipient_ids: [first_recipient.id, second_recipient.id] },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing gifts invalid type validation' do
@@ -90,7 +97,8 @@ describe 'User can create order', type: :request do
     context 'wrong gift types' do
       before do
         post "/v1/order/#{school.id}",
-          params: { recipient_ids: [first_recipient.id, second_recipient.id], gift_type: [:jacket] }
+          params: { recipient_ids: [first_recipient.id, second_recipient.id], gift_type: [:jacket] },
+          headers: {authorization: auth_token}
       end
 
       it 'returns missing gifts invalid type validation' do
@@ -105,8 +113,8 @@ describe 'User can create order', type: :request do
         create(:recipient, school: school)
       end
       post "/v1/order/#{school.id}",
-        params: { recipient_ids: school.recipients.ids,
-                  gift_types: [:mug, :t_shirt, :hoodie, :sticker] }
+        params: { recipient_ids: school.recipients.ids, gift_types: [:mug, :t_shirt, :hoodie, :sticker] },
+        headers: {authorization: auth_token}
     end
 
     it 'returns order limit exceeded validation' do
@@ -122,8 +130,8 @@ describe 'User can create order', type: :request do
         create(:recipient, school: school)
       end
       post "/v1/order/#{school.id}",
-        params: { recipient_ids: school.recipients.ids,
-                  gift_types: [:mug, :t_shirt, :hoodie, :sticker] }
+        params: { recipient_ids: school.recipients.ids, gift_types: [:mug, :t_shirt, :hoodie, :sticker] },
+        headers: {authorization: auth_token}
     end
 
     it 'returns order limit exceeded validation' do

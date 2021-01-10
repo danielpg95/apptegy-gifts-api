@@ -30,7 +30,6 @@
 # available at https://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
   activemodel:
     errors:
       models:
@@ -62,3 +61,9 @@ en:
           recipients_limit_exceeded: 'The order can not be created because it exceeds the recipients limit per order'
           order_status: 'Your order has already been shipped or is cancelled'
           shipment_limit_exceeds: 'The order can not be shipped because the school reached or will reach the quota for today'
+  authorization:
+    invalid_token: 'The authorization token provided is invalid'
+    missing_token: 'Missing authorization token'
+  authentication:
+    invalid_credentials: 'Username or password is incorrect'
+
