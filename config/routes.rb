@@ -15,5 +15,11 @@ Rails.application.routes.draw do
     #   resources :recipients, only: %i[index create update destroy]
     # end
 
+    get 'order/:school_id', to: 'orders#index'
+    post 'order/:school_id', to: 'orders#create'
+    patch 'order/:school_id', to: 'orders#update'
+    delete 'order/:school_id', to: 'orders#destroy'
+
+    post 'ship_order/:school_id', to: 'orders#ship_order'
   end
 end

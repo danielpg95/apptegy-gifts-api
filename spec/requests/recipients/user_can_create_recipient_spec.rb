@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-describe 'User can create school', type: :request do
+describe 'User can create recipient', type: :request do
   let!(:school) do
     create(:school)
   end
@@ -38,7 +38,7 @@ describe 'User can create school', type: :request do
   context 'unsuccessfully' do
     context 'with incorrect school id' do
       before do
-        post "/v1/recipient/#{Faker::Alphanumeric.alphanumeric(number: 10)}",
+        post "/v1/recipient/#{School.last.id + 1}",
           params: { first_name: first_name, last_name: last_name, address: address }
       end
 
