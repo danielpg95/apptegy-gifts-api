@@ -31,7 +31,7 @@ describe 'User can cancel order', type: :request do
       before do
         order.update(status: :order_shipped)
 
-        patch "/v1/order/#{school.id}", params: { order_id: order.id  }
+        delete "/v1/order/#{school.id}", params: { order_id: order.id  }
       end
 
       it 'returns missing recipient ids validation' do
@@ -43,7 +43,7 @@ describe 'User can cancel order', type: :request do
 
     context 'with incorrect school id' do
       before do
-        patch "/v1/order/#{School.last.id + 1}",
+        delete "/v1/order/#{School.last.id + 1}",
           params: { order_id: order.id }
       end
 
@@ -54,7 +54,7 @@ describe 'User can cancel order', type: :request do
 
     context 'with incorrect order id' do
       before do
-        patch "/v1/order/#{school.id}",
+        delete "/v1/order/#{school.id}",
           params: { order_id: Faker::Alphanumeric.alphanumeric(number: 10) }
       end
 
