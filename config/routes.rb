@@ -21,5 +21,7 @@ Rails.application.routes.draw do
     delete 'order/:school_id', to: 'orders#destroy'
 
     post 'ship_order/:school_id', to: 'orders#ship_order'
+
+    post 'authenticate', to: 'authentication#authenticate'
   end
 end
