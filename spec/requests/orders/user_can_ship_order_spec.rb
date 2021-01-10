@@ -22,7 +22,7 @@ describe 'User can ship order', type: :request do
 
   context 'successfully' do
     before do
-      post "/v1/ship_order/#{school.id}", params: { order_id: order.id }
+      post "/v1/ship_order/#{school.id}", params: { order_id: order.id, send_emails: true }
     end
     
     it 'returns order' do

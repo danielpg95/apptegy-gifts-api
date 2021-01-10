@@ -7,7 +7,7 @@ module V1
       before_validation :find_school, :find_order
 
       validates :school_id, :order_id, presence: true
-      validates :send_emails, inclusion: { in: [true, false] }, if: :send_emails
+      validates :send_emails, inclusion: { in: %w[true false] }, if: :send_emails
       validate :school_exists, :order_exists, :valid_order_status, :shipment_available?
 
       private

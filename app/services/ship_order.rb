@@ -9,7 +9,7 @@ class ShipOrder
 
   def call
     @order.update(status: :order_processing)
-    # SendOrderRecipientsEmails.new(order_id: @order.id).call if @params[:send_emails]
+    ShipmentMailer.order_shipped(@order.id).deliver if @params[:send_emails]
     @order.update(status: :order_shipped, shipped_at: Time.now)
     @order.reload
   end
