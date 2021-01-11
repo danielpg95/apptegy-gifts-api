@@ -2,7 +2,11 @@ module V1
   class OrdersController
     # Serializer to return selected class attributes
     class Serializer < ActiveModel::Serializer
-      attributes :status, :recipients, :gifts, :school
+      attributes :status, :shipped_at, :recipients, :gifts, :school
+
+      def shipped_at
+        I18n.l(object.shipped_at, format: '%d/%B/%Y %H:%M') if object.shipped_at.present?
+      end
 
       # Had trouble making it work with has_many with each_serialize, so a manual approach was used to save time
       def gifts
