@@ -1,6 +1,6 @@
 # Gifts API Exercise
 
-The instructions were based on the proyect template provided in the exercise:
+The instructions were based on the project template provided in the exercise:
 
 Simplecov test coverage: 100%
 
